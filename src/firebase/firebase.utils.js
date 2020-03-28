@@ -32,6 +32,39 @@ export const createUserProfileDoc = async (userAuth, additionalData) => {
     return userRef;
 }
 
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+    const collectionRef = firestore.collection(collectionKey);
+    console.log(collectionRef);
+
+    // we need to batch so that the doc won't stop halfway when saving perharp due to bad internet connection
+    const batch = firestore.batch();
+    objectsToAdd.forEach(obj => {
+        const newDocRef = collectionRef.doc(); // set a new empty doc with a UID
+        batch.set(newDocRef, obj)
+    });
+    return await batch.commit(); //this would return null if its successful
+}
+
+export const convertCollectionSnapshotToMap = (collections) => {
+    const transformedCollection = collections.docs.map(doc => {
+        const { title, items } = doc.data();
+
+        return {
+            routeName: encodeURI(title.toLowerCase()),
+            id: doc.id,
+            title,
+            items
+        }
+    })
+    
+    console.log(transformedCollection)
+    // assign keys to each object
+    return transformedCollection.reduce((accumulator, collection) => {
+        accumulator[collection.title.toLowerCase()] = collection;
+        return accumulator
+    }, {})
+}
+ 
 firebase.initializeApp(config);
 
 export const auth = firebase.auth();
