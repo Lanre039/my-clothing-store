@@ -13,7 +13,7 @@ import RegisterPage from './pages/register/register';
 import { selectCurrentUser } from './redux/user/user.selectors';
 import CheckoutPage from './pages/checkout/checkout.component';
 import { selectCollectionsForPreview } from './redux/shop/shop.selectors';
-
+import { checkUserSession } from './redux/user/user.action';
 class App extends React.Component {
   unSubscribeFromAuth = null
 
@@ -40,9 +40,9 @@ class App extends React.Component {
         
         // setCurrentUser(userAuth)
       // addCollectionAndDocuments('collections', collectionsArray.map(({title, items}) => ({ title, items})))
-      
-      
     // })
+    const { checkUserSession } = this.props;
+    checkUserSession();
   }
 
   componentWillUnmount() {
@@ -78,7 +78,7 @@ const mapStateToProps = createStructuredSelector({
 })
 
 const mapDispatchToProps = dispatch => ({
-  // setCurrentUser: user => dispatch(setCurrentUser(user))
+  checkUserSession: () => dispatch(checkUserSession)
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
